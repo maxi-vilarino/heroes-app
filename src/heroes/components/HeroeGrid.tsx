@@ -1,10 +1,21 @@
+import type { Hero } from "../types/hero.interface";
 import { HeroGridCard } from "./HeroGridCard";
 
-export const HeroeGrid = () => {
+interface Props {
+  heroes: Hero[]
+}
+
+export const HeroeGrid = ({heroes}:Props) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
       {/* Hero Card 1 - Superman */}
-      <HeroGridCard />
+      {heroes.map((hero) => (
+        <ul key={hero.id}>
+          <li>
+            <HeroGridCard hero={hero}/>
+          </li>
+        </ul>
+      ))}
     </div>
   );
 };
