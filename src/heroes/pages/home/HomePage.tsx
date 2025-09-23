@@ -15,13 +15,14 @@ export const HomePage = () => {
   const activeTab = searchParams.get("tab") ?? "all";
   const page = searchParams.get("page") ?? "1";
   const limit = searchParams.get("limit") ?? "6";
+  const category = searchParams.get("category") ?? "all";
 
   const selectedTab = useMemo(() => {
     const validTab = ["all", "favorites", "heroes", "villains"];
     return validTab.includes(activeTab) ? activeTab : "all";
   }, [activeTab]);
 
-  const { data: heroesResponse } = usePaginatedHero(page, limit);
+  const { data: heroesResponse } = usePaginatedHero(page, limit, category);
 
   const { data: summary } = useHeroSummary();
 
@@ -46,6 +47,8 @@ export const HomePage = () => {
             onClick={() =>
               setSearchParams((prev) => {
                 prev.set("tab", "all");
+                prev.set("category", "all");
+                prev.set("page", "1");
                 return prev;
               })
             }
@@ -58,6 +61,8 @@ export const HomePage = () => {
             onClick={() =>
               setSearchParams((prev) => {
                 prev.set("tab", "favorites");
+                prev.set("category", "favorite");
+                prev.set("page", "1");
                 return prev;
               })
             }
@@ -69,6 +74,8 @@ export const HomePage = () => {
             onClick={() =>
               setSearchParams((prev) => {
                 prev.set("tab", "heroes");
+                prev.set("category", "hero");
+                prev.set("page", "1");
                 return prev;
               })
             }
@@ -80,6 +87,8 @@ export const HomePage = () => {
             onClick={() =>
               setSearchParams((prev) => {
                 prev.set("tab", "villains");
+                prev.set("category", "villain");
+                prev.set("page", "1");
                 return prev;
               })
             }
@@ -98,13 +107,11 @@ export const HomePage = () => {
         </TabsContent>
         <TabsContent value="heroes">
           {/* Mostrar todos los heroes */}
-          <h1>Heroes</h1>
-          <HeroeGrid heroes={[]} />
+          <HeroeGrid heroes={heroesResponse?.heroes ?? []} />
         </TabsContent>
         <TabsContent value="villains">
           {/* Mostrar todos los villanos */}
-          <h1>Villains</h1>
-          <HeroeGrid heroes={[]} />
+          <HeroeGrid heroes={heroesResponse?.heroes ?? []} />
         </TabsContent>
       </Tabs>
 
