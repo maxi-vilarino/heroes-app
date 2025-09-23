@@ -1,13 +1,14 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useHeroSummary } from "@/heroes/hooks/useHeroSummary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
 import { HeroStats } from "@/heroes/components/HeroStats";
 import { HeroeGrid } from "@/heroes/components/HeroeGrid";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { CustomBreadcrumbs } from "@/components/custom/CustomBreadcrumbs";
-import { getHeroesByPageAction } from "@/heroes/actions/get-heroes-by-page.actions";
+import { usePaginatedHero } from "@/heroes/hooks/usePaginatedHero";
+
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -20,11 +21,9 @@ export const HomePage = () => {
     return validTab.includes(activeTab) ? activeTab : "all";
   }, [activeTab]);
 
-  const { data: heroesResponse } = useQuery({
-    queryKey: ["heroes", { page, limit }],
-    queryFn: () => getHeroesByPageAction(+page, +limit),
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
+  const { data: heroesResponse } = usePaginatedHero(page, limit);
+
+  const { data: summary } = useHeroSummary();
 
   return (
     <>
@@ -51,7 +50,7 @@ export const HomePage = () => {
               })
             }
           >
-            All Characters (16)
+            All Characters ({summary?.totalHeroes ?? 0})
           </TabsTrigger>
           <TabsTrigger
             value="favorites"
@@ -74,7 +73,7 @@ export const HomePage = () => {
               })
             }
           >
-            Heroes (12)
+            Heroes ({summary?.heroCount ?? 0})
           </TabsTrigger>
           <TabsTrigger
             value="villains"
@@ -85,7 +84,7 @@ export const HomePage = () => {
               })
             }
           >
-            Villains (2)
+            Villains ({summary?.villainCount ?? 0})
           </TabsTrigger>
         </TabsList>
         <TabsContent value="all">
