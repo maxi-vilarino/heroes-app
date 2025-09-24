@@ -21,7 +21,6 @@ export const getHeroesByPageAction = async (
       category: category,
     },
   });
-  console.log("Data: ", data);
 
   const heroes = data.heroes.map((hero) => ({
     ...hero,
